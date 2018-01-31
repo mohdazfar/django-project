@@ -1,0 +1,31 @@
+{% extends "header.html" %}
+
+{% block content %}
+<form  method="get" action="">
+    <div style="display: flex; justify-content: center;">
+  	    <input type="text" name="query" placeholder="Search products by ID..."  size="70" required>
+	    <button type="submit">Search</button>
+    </div>
+</form>
+
+    {% for i in data %}
+    <div id="content" >
+        <div id="items">
+            <div id={{ i.item_id }} class="items">
+                <img src="static/images/{{ i.item_id }}.jpg" style='max-height:50px;'/> <br>
+                <a href="products?item_id={{ i.item_id }}&format=json" class="add-basket">{{ i.item_name }}</a><br><br><br>
+            </div>
+        </div>
+    </div>
+
+    {% endfor%}
+
+        <input type="button" class="button" onclick="location.href='addProducts.html';" value="Add Products" />
+    <style>
+    input.button{
+          margin:auto;
+          display:block;
+    }
+    </style>
+
+{% endblock %}
