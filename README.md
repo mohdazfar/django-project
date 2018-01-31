@@ -1,5 +1,5 @@
 USAGE:
-I have used POSTMAN to validate my GET and POST requests.
+I have used POSTMAN to validate the GET and POST requests.
 
 Task - Part 1: Accept a REST request which contains fields described below, validates them (type, content,
 etc.), and then saves the data to database. Application must return an identifier for the newly
