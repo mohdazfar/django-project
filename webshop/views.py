@@ -1,28 +1,37 @@
 from django.shortcuts import render
 
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
+from django.core.cache import cache
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from . models import products, vat_info
+from . models import products
 from . serializers import productSerializer
 from django.db.models import Q
 
 
+# Implemented Caching on the front page only
 def index(request):
     '''
-    Search for the item_id and return the data for that
+    Homepage. Search for the item_id and return the data for that
     specific item_id
     :param request:
     :return: serialized data in JSON format
     '''
     query = request.GET.get('query')
-    if query:
-        response_url = 'products?item_id={}&format=json'.format(query)
-        return HttpResponseRedirect(response_url)
-    product_list = products.objects.all()
-    serializer = productSerializer(product_list, many=True)
+    cache_time = 60 # number of seconds it will live in cache
+    serializer = cache.get(query)
+    if not  serializer:
+        if query:
+            response_url = 'products?item_id={}&format=json'.format(query)
+            response = cache.get(response_url)
+            if not response:
+                cache.set(response_url, HttpResponseRedirect(response_url), cache_time)
+                return HttpResponseRedirect(response_url)
+            return response
+        product_list = products.objects.all()
+        serializer = productSerializer(product_list, many=True)
+        cache.set(query, serializer, cache_time)
     return render(request, 'index.html', {'data': serializer.data})
 
 
